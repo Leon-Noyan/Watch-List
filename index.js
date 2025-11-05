@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="popularCardContent">
             <img src="${posters}" alt="movie poster">
             <h3>${movie.title}</h3>
-            <p>${movie.vote_average}</p>
+            <p>⭐${movie.vote_average}</p>
             <button class="fav-btn">🤍</button>
                 </div>
             `
