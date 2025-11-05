@@ -3,23 +3,62 @@ const token =
 
 const apiPopular = `https://api.themoviedb.org/3/movie/popular?language=en-US&page=1`
 
-async function fetchPopularMovies(url) {
-    try {
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                accept: 'application/json',
-                Authorization: `Bearer ${token}`
-            }
-        })
-        const data = await response.json()
+document.addEventListener('DOMContentLoaded', () => {
+    const popularCon = document.getElementById('popularContainer')
+    async function fetchPopularMovies(url) {
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    accept: 'application/json',
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            const data = await response.json()
+            console.log(data.results)
+            // skapar en array med de 6 första populäraste filmerna just nu
+            data.results.slice(0, 5).forEach((movie) => {
+                // skapar ett kort som div element och ger den en klass
+                let card = document.createElement('div')
 
-        console.log(data.results)
-        return data.results
-    } catch (error) {
-        console.error('Error has accured', error)
-        return []
+                card.classList.add('popularCards')
+                console.log(movie)
+                // hanterar tillfällen då en poster är ur funktion
+                let posters
+                if (movie.poster_path) {
+                    posters = `https://image.tmdb.org/t/p/w300${movie.poster_path}`
+                } else {
+                    posters = 'fallback.jpg'
+                }
+                // lägger in html kod för cardsen som visas på sidan
+                card.innerHTML = `
+                <div class="popularCardContent">
+            <img src="${posters}" alt="movie poster">
+            <h3>${movie.title}</h3>
+            <p>${movie.vote_average}</p>
+            <button class="fav-btn">🤍</button>
+                </div>
+            `
+
+                const favBtn = card.querySelector('.fav-btn')
+
+                let favHeart = function () {
+                    if (favBtn.textContent === '🤍') {
+                        favBtn.textContent = '💓'
+                    } else {
+                        favBtn.textContent = '🤍'
+                    }
+                }
+                favBtn.addEventListener('click', favHeart)
+
+                // lägger in korten i popularCon
+                popularCon.appendChild(card)
+            })
+        } catch (error) {
+            console.error('Error has accured', error)
+            return []
+        }
     }
-}
 
-fetchPopularMovies(apiPopular)
+    fetchPopularMovies(apiPopular)
+})
