@@ -9,29 +9,69 @@ body {
     color: white !important;
 }
 
-#popularContainer {
-    display: flex;
-    flex-direction: row;
+#popularContainer,
+#allMovies {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
     gap: 1rem;
     font-size: 12px;
 }
 
-.popularCardContent h3 {
+.popularCards h3,
+.movieCard h3 {
     font-size: 16px !important;
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+.popularCards img,
+.movieCard img {
+    width: 13rem;
+    height: auto;
+    border-radius: 8px;
+    display: block;
+    margin: 0 auto;
+}
+
+#allMovies {
+    margin-top: 2rem;
+}
+
+.movieCard {
     text-align: center;
 }
 
-.popularCardContent img {
-    width: 13rem;
-    height: auto;
+/* media queries för allMovies*/
+
+@media (min-width: 768px) {
+    #popularContainer,
+    #allMovies {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
-.popularCards {
+@media (min-width: 992px) {
+    #popularContainer,
+    #allMovies {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 1200px) {
+    #popularContainer,
+    #allMovies {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+.popularCards,
+.movieCard {
     margin-top: 2rem;
     background-size: cover;
     cursor: pointer;
     border-radius: 8px;
     position: relative;
+    text-align: center;
 }
 
 .popularCards:hover {

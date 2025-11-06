@@ -3,6 +3,17 @@ const token =
 
 const apiPopular = `https://api.themoviedb.org/3/movie/popular?language=en-US&page=1`
 
+let favorites = JSON.parse(localStorage.getItem('Favorites')) || []
+
+// fav button funktion
+let favHeart = function (favBtn) {
+    if (favBtn.textContent === '🤍') {
+        favBtn.textContent = '💓'
+    } else {
+        favBtn.textContent = '🤍'
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const popularCon = document.getElementById('popularContainer')
     async function fetchPopularMovies(url) {
@@ -15,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             })
             const data = await response.json()
+
             console.log(data.results)
             // skapar en array med de 6 första populäraste filmerna just nu
             data.results.slice(0, 5).forEach((movie) => {
@@ -41,15 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
             `
 
                 const favBtn = card.querySelector('.fav-btn')
+                favBtn.addEventListener('click', () => favHeart(favBtn))
 
-                let favHeart = function () {
-                    if (favBtn.textContent === '🤍') {
-                        favBtn.textContent = '💓'
-                    } else {
-                        favBtn.textContent = '🤍'
-                    }
-                }
-                favBtn.addEventListener('click', favHeart)
 
                 // lägger in korten i popularCon
                 popularCon.appendChild(card)
@@ -61,10 +66,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     fetchPopularMovies(apiPopular)
-})
 
 // fetch för alla filmer
-document.addEventListener('DOMContentLoaded', () => {
+
     const allMoviesApi = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=`
 
     async function fetchWholeList(page = 1) {
@@ -90,12 +94,18 @@ document.addEventListener('DOMContentLoaded', () => {
         movies.forEach((movie) => {
             const listCard = document.createElement('div')
             listCard.classList.add('movieCard')
+
             listCard.innerHTML = `
+            <div class="movieCardContent">
       <img src="https://image.tmdb.org/t/p/w300${movie.poster_path}" alt="${movie.title}">
       <h3>${movie.title}</h3>
       <p>${movie.release_date}</p>
-
+      <p>⭐${movie.vote_average}</p>
+            <button class="fav-btn">🤍</button>
+          </div>
       `
+            const favBtn = listCard.querySelector('.fav-btn')
+            favBtn.addEventListener('click', () => favHeart(favBtn))
             containerMovie.appendChild(listCard)
         })
     }
