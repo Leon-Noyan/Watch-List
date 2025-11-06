@@ -62,3 +62,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchPopularMovies(apiPopular)
 })
+
+// fetch för alla filmer
+document.addEventListener('DOMContentLoaded', () => {
+    const allMoviesApi = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=`
+
+    async function fetchWholeList(page = 1) {
+        const res = await fetch(`${allMoviesApi}${page}`, {
+            method: 'GET',
+            headers: {
+                accept: 'application/json',
+                Authorization: `Bearer ${token}`
+            }
+        })
+        const data = await res.json()
+        console.log(`${page}`, data.results)
+
+        renderMovies(data.results)
+
+        if (page < 5) {
+            fetchWholeList(page + 1)
+        }
+    }
+
+    function renderMovies(movies) {
+        const containerMovie = document.getElementById('allMovies')
+        movies.forEach((movie) => {
+            const listCard = document.createElement('div')
+            listCard.classList.add('movieCard')
+            listCard.innerHTML = `
+      <img src="https://image.tmdb.org/t/p/w300${movie.poster_path}" alt="${movie.title}">
+      <h3>${movie.title}</h3>
+      <p>${movie.release_date}</p>
+
+      `
+            containerMovie.appendChild(listCard)
+        })
+    }
+    fetchWholeList()
+})
