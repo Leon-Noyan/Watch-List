@@ -1,22 +1,22 @@
-const token =
-    'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzYzNhZjExMWRhZGQ5MTY3NDhmZTE0NDA3ZWZmOGE5MyIsIm5iZiI6MTc1MTUzOTU5Mi4zNDksInN1YiI6IjY4NjY1Zjg4MTM1NDNhOGIyODc0MzIxZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.0zBYpWT_lFsiCnaaZV7SoA8XIt22wUxHAYx66BZdJyM'
+import { TOKEN } from './config.js'
+const token = TOKEN
 
 const apiPopular = `https://api.themoviedb.org/3/movie/popular?language=en-US&page=1`
 
-let favorites = JSON.parse(localStorage.getItem('Favorites')) || []
+const getFavorites = () => JSON.parse(localStorage.getItem('Favorites')) || []
 
 // fav button funktion
 let favHeart = function (favBtn, movie) {
+    let currFavorites = getFavorites()
     if (favBtn.textContent === '🤍') {
         favBtn.textContent = '💓'
-        favorites.push(movie) // Lägg till filmen i favorites
+        currFavorites.push(movie) // Lägg till filmen i favorites
     } else {
         favBtn.textContent = '🤍'
         // Använder filter för att skapa en ny array utan den borttagna filmen
-        favorites = favorites.filter((fav) => fav.id !== movie.id)
+        currFavorites = currFavorites.filter((fav) => fav.id !== movie.id)
     }
-    // Lokal lagring uppdateras ALLTID efter ändring
-    localStorage.setItem('Favorites', JSON.stringify(favorites))
+    localStorage.setItem('Favorites', JSON.stringify(currFavorites))
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -33,8 +33,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json()
 
             console.log(data.results)
-            // skapar en array med de 6 första populäraste filmerna just nu
+            // skapar en array med de 5 första populäraste filmerna just nu
             data.results.slice(0, 5).forEach((movie) => {
+                const latestFavs = getFavorites()
+                const initialHeart = latestFavs.some(
+                    (fav) => fav.id === movie.id
+                )
+                    ? '💓'
+                    : '🤍'
                 // skapar ett kort som div element och ger den en klass
                 let card = document.createElement('div')
 
@@ -47,13 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     posters = 'fallback.jpg'
                 }
-
-                // Kontrollera om filmen redan är en favorit
-                const initialHeart = favorites.some(
-                    (fav) => fav.id === movie.id
-                )
-                    ? '💓'
-                    : '🤍'
 
                 // lägger in html kod för cardsen som visas på sidan
                 card.innerHTML = `
@@ -79,6 +78,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchPopularMovies(apiPopular)
 
+    window.addEventListener('storage', (event) => {
+        if (event.key === 'Favorites') {
+            const popularCon = document.getElementById('popularContainer')
+            const containerMovie = document.getElementById('allMovies')
+
+            if (popularCon) popularCon.innerHTML = ''
+            if (containerMovie) containerMovie.innerHTML = ''
+
+            fetchPopularMovies(apiPopular)
+            fetchWholeList()
+        }
+    })
+
     // fetch för alla filmer
 
     const allMoviesApi = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=`
@@ -93,12 +105,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             })
             const data = await res.json()
-            console.log(`${page}`, data.results)
-
             renderMovies(data.results)
 
-            if (page < 5) {
-                // Fortsätt till nästa sida upp till 5
+            if (page < 2) {
                 fetchWholeList(page + 1)
             }
         } catch (error) {
@@ -108,11 +117,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderMovies(movies) {
         const containerMovie = document.getElementById('allMovies')
+        const latestFavs = getFavorites()
+
         movies.forEach((movie) => {
             const listCard = document.createElement('div')
             listCard.classList.add('movieCard')
 
-            // Hantera fallback för posters även här (SAKNADES tidigare)
+            // Hantera fallback för posters
             let posters
             if (movie.poster_path) {
                 posters = `https://image.tmdb.org/t/p/w300${movie.poster_path}`
@@ -121,9 +132,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Kontrollera om filmen redan är en favorit
-            const initialHeart = favorites.some((fav) => fav.id === movie.id)
-                ? '💓'
-                : '🤍'
+            let initialHeart
+            if (latestFavs.some((fav) => fav.id === movie.id)) {
+                initialHeart = '💓'
+            } else {
+                initialHeart = '🤍'
+            }
 
             listCard.innerHTML = `
                 <div class="movieCardContent">

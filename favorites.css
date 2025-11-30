@@ -1,0 +1,21 @@
+#fav-movie-container {
+  display: grid;
+  grid-template-columns: repeat(6, 15rem);
+    gap: 1rem;
+    font-size: 12px;
+    overflow: hidden;
+}
+
+.delete-btn {
+  color: black;
+  background-color: red;
+  border-radius: 4px;
+  border: none;
+  width: 5rem;
+  cursor: pointer;
+}
+
+#tom-lista-text {
+  font-size: 24px;
+  font-weight: bold;
+}
