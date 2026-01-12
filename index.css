@@ -48,6 +48,10 @@ body {
     #allMovies {
         grid-template-columns: repeat(3, 1fr);
     }
+    .fav-btn {
+        top: 0.75rem;
+        left: 0.75rem;
+    }
 }
 
 @media (min-width: 992px) {
