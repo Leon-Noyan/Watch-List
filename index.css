@@ -1,59 +1,116 @@
+/* --- Grundläggande stil --- */
 html,
 body {
     background-color: rgb(0, 0, 0);
     color: white;
+    margin: 0;
+    padding: 0;
 }
 
 .navbar {
     margin-bottom: 0 !important;
-    color: white !important;
 }
 
+#backgroundImg {
+    width: 100%;
+    height: 28rem !important;
+    object-fit: cover;
+    display: block;
+}
+
+/* --- Layout för film-nätet --- */
 #popularContainer,
 #allMovies {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
-    gap: 1rem;
+    gap: 2rem;
     font-size: 12px;
+    margin-top: 2rem;
 }
 
-.popularCards h3,
-.movieCard h3 {
-    font-size: 16px !important;
+/* --- Kort-behållare --- */
+.popularCards,
+.movieCard {
+    position: relative; /* Viktigt för att barn med 'absolute' ska stanna här */
     text-align: center;
-    margin-top: 0.5rem;
+    transition: transform 0.3s ease;
 }
 
+/* Behållaren som håller bilden och knappen */
+.popularCardContent,
+.movieCardContent {
+    position: relative; /* Detta låser knappen till bildens hörn */
+    display: inline-block;
+    cursor: pointer;
+}
+
+.popularCardContent:hover,
+.movieCardContent:hover {
+    transform: translateY(-5px) scale(1.02);
+}
+
+/* --- Bilder --- */
 .popularCards img,
 .movieCard img {
-    width: 13rem;
+    width: 100%;
+    max-width: 13rem;
     height: auto;
     border-radius: 8px;
     display: block;
     margin: 0 auto;
 }
 
-#allMovies {
-    margin-top: 2rem;
+/* --- Texter --- */
+.popularCards h3,
+.movieCard h3 {
+    font-size: 16px !important;
+    margin-top: 0.8rem;
+    pointer-events: none;
 }
 
-.movieCard {
-    text-align: center;
+.popularCards p,
+.movieCard p {
+    margin: 0.2rem 0;
+    pointer-events: none;
 }
 
-/* media queries för allMovies*/
+/* --- Fav knapp (Hjärtat) --- */
+.fav-btn {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 10;
 
+    background: rgba(0, 0, 0, 0.2); /* Svart halvtransparent cirkel bakom */
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 18px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.fav-btn:hover {
+    transform: scale(1.2); /* Hjärtat större vid hovring */
+}
+
+/* --- Responsivitet (Media Queries) --- */
+
+/* Tablet: 3 kolumner */
 @media (min-width: 768px) {
     #popularContainer,
     #allMovies {
         grid-template-columns: repeat(3, 1fr);
     }
-    .fav-btn {
-        top: 0.75rem;
-        left: 0.75rem;
-    }
 }
 
+/* Desktop: 4 kolumner */
 @media (min-width: 992px) {
     #popularContainer,
     #allMovies {
@@ -61,66 +118,10 @@ body {
     }
 }
 
+/* Stor skärm: 5 kolumner */
 @media (min-width: 1200px) {
     #popularContainer,
     #allMovies {
         grid-template-columns: repeat(5, 1fr);
-    }
-}
-
-.popularCards,
-.movieCard {
-    margin-top: 2rem;
-    background-size: cover;
-    cursor: pointer;
-    border-radius: 8px;
-    position: relative;
-    text-align: center;
-}
-
-.popularCards:hover,
-.movieCardContent:hover {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-}
-
-.popularCards h3,
-p {
-    pointer-events: none;
-}
-
-#backgroundImg {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 28rem !important;
-    object-fit: cover;
-    z-index: -1;
-}
-
-.fav-btn {
-    margin: 0;
-    padding: 0;
-    background: none;
-    border: none;
-    outline: none;
-    color: inherit;
-    font-size: 18px;
-    z-index: 100;
-    position: absolute;
-    top: 0.5rem;
-    left: 0.5rem;
-}
-
-@media (max-width: 767px) {
-    .fav-btn {
-        top: 0.75rem;
-        left: 0.75rem;
-    }
-
-    .popularCards,
-    .movieCard {
-        position: relative;
     }
 }
